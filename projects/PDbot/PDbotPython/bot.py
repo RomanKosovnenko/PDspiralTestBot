@@ -23,7 +23,9 @@ class PDbot(ActivityHandler):
     # See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
 
     async def on_members_added_activity(self, members_added: ChannelAccount, turn_context: TurnContext):
-        await self._send_welcome_message(turn_context)
+        for member_added in turn_context.activity.members_added:
+            if member_added.id != turn_context.activity.recipient.id:
+                await self._send_welcome_message(turn_context)
         
     async def _send_welcome_message(self, turn_context: TurnContext):
         """
@@ -31,12 +33,10 @@ class PDbot(ActivityHandler):
         :param turn_context:
         :return:
         """
-        for member_added in turn_context.activity.members_added:
-            if member_added.id != turn_context.activity.recipient.id:
-                reply = Activity(type=ActivityTypes.message)
-                reply.text = "Hello and welcome! \n\n Send photo of the handwrited spiral to get probability of PD"
-                reply.attachments = [await self._get_spiral_example(turn_context)]
-                await turn_context.send_activity(reply)
+        reply = Activity(type=ActivityTypes.message)
+        reply.text = "Hello and welcome! \n\n Send photo of the handwrited spiral to get probability of PD"
+        reply.attachments = [await self._get_spiral_example(turn_context)]
+        await turn_context.send_activity(reply)
 
     async def _get_spiral_example(self, turn_context: TurnContext) -> Attachment:
         """
@@ -80,15 +80,16 @@ class PDbot(ActivityHandler):
         :param turn_context:
         :return: 
         """
-        await self._on_command_message_activity(turn_context)
-        if (turn_context.activity.attachments and len(turn_context.activity.attachments) > 0):
-            await self._handle_incoming_attachment(turn_context)
-        else:
-            await self._handle_no_attachments_message(turn_context)
+        if not await self._on_command_message_activity(turn_context):
+            if (turn_context.activity.attachments and len(turn_context.activity.attachments) > 0):
+                await self._handle_incoming_attachment(turn_context)
+            else:
+                await self._handle_no_attachments_message(turn_context)
 
     async def _on_command_message_activity(self, turn_context: TurnContext):
         if turn_context.activity.text == '/start':
             await self._send_welcome_message(turn_context)
+            return True
 
 
     async def _handle_no_attachments_message(self, turn_context: TurnContext):
