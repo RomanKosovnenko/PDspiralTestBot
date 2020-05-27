@@ -18,6 +18,8 @@ from botbuilder.schema import (
     ActionTypes,
 )
 
+from predictor_helper import PredictorHelper
+
 
 class PDbot(ActivityHandler):
     # See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
@@ -55,7 +57,6 @@ class PDbot(ActivityHandler):
         response = await connector.conversations.upload_attachment(
             conversation_id,
             AttachmentData(
-                name="architecture-resize.png",
                 original_base64=image_data,
                 type="image/png",
             ),
@@ -169,20 +170,21 @@ class PDbot(ActivityHandler):
         #     print(exception)
         #     return {}
 
-    async def _predict_pd(self, turn_context: TurnContext, attachment: Attachment):
-        reply = Activity(type=ActivityTypes.message)
+    async def _predict_pd(self, turn_context: TurnContext, attachment: Attachment): 
+        predictorHelper = PredictorHelper()
+
+        predictions = predictorHelper.get_prediction(attachment)
+
+        for prediction in predictions:
+            reply = Activity(type=ActivityTypes.message)
+            reply.text = f"{prediction['predictor']} predictor Status: {prediction['status']}"
+            await turn_context.send_activity(reply)
         
+
+
         
-        url = 'http://127.0.0.1:5000/predict'
 
-        myobj = {'somekey': 'somevalue'}
-
-        r = requests.get(url = url, json = myobj)
-        data = r.json()
-
-        reply.text = f"PyTorch predictor Status: {data['status']}"
-
-        await turn_context.send_activity(reply)
+        
     
 
     

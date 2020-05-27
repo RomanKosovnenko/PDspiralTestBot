@@ -1,14 +1,10 @@
-from flask_restful import Resource
-
-class PDDetection(Resource):
-    
-  def get(self):
-      return {
-          "status" : "ok"
-      }
-  def post(self):
-    
+def get():
     return {
-        "type" : "POST",
         "status" : "ok"
-      }
+    }
+def post():
+  
+  return {
+      "type" : "POST",
+      "status" : "ok"
+    }

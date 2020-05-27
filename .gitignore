@@ -39,3 +39,6 @@ yarn-error.log*
 outliers/__pycache__
 outliers/.cache
 outliers/tests/__pycache__
+
+#zip-files
+*.zip
