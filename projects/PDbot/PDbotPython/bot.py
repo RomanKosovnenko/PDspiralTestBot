@@ -78,7 +78,7 @@ class PDbot(ActivityHandler):
         Check is there any attachments in it. 
         If so, then handle it, otherwise send respons.
         :param turn_context:
-        :return: 
+        :return
         """
         if not await self._on_command_message_activity(turn_context):
             if (turn_context.activity.attachments and len(turn_context.activity.attachments) > 0):
@@ -90,7 +90,6 @@ class PDbot(ActivityHandler):
         if turn_context.activity.text == '/start':
             await self._send_welcome_message(turn_context)
             return True
-
 
     async def _handle_no_attachments_message(self, turn_context: TurnContext):
         """
@@ -145,38 +144,51 @@ class PDbot(ActivityHandler):
         reply = Activity(type=ActivityTypes.message)
         reply.text = "You send an image, please wait for results..."
         await turn_context.send_activity(reply)
-
-        await self._predict_pd(turn_context, attachment)
+        attachment_info = await self._download_attachment_and_write(attachment)
+        await self._predict_pd(turn_context, attachment_info)
         
-        
-        # try:
-        #     response = urllib.request.urlopen(attachment.content_url)
-        #     headers = response.info()
 
-        #     # If user uploads JSON file, this prevents it from being written as
-        #     # "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
-        #     if headers["content-type"] == "application/json":
-        #         data = bytes(json.load(response)["data"])
-        #     else:
-        #         data = response.read()
+    async def _download_attachment_and_write(self, attachment: Attachment) -> dict:
+        """
+        Retrieve the attachment via the attachment's contentUrl.
+        :param attachment:
+        :return: Dict: keys "filename", "local_path"
+        """
+        try:
+            response = urllib.request.urlopen(attachment.content_url)
+            headers = response.info()
 
-        #     local_filename = os.path.join(os.getcwd(), attachment.name)
-        #     with open(local_filename, "wb") as out_file:
-        #         out_file.write(data)
+            # If user uploads JSON file, this prevents it from being written as
+            # "{"type":"Buffer","data":[123,13,10,32,32,34,108..."
+            if headers["content-type"] == "application/json":
+                data = bytes(json.load(response)["data"])
+            else:
+                data = response.read()
 
-        #     return {"filename": attachment.name, "local_path": local_filename}
-        # except Exception as exception:
-        #     print(exception)
-        #     return {}
+            local_filename = os.path.join(os.getcwd(), attachment.name)
+            with open(local_filename, "wb") as out_file:
+                out_file.write(data)
 
-    async def _predict_pd(self, turn_context: TurnContext, attachment: Attachment): 
+            return {"filename": attachment.name, "local_path": local_filename}
+        except Exception as exception:
+            print(exception)
+            return {}
+
+    async def _predict_pd(self, turn_context: TurnContext, attachment_info: dict): 
         predictorHelper = PredictorHelper()
 
-        predictions = predictorHelper.get_prediction(attachment)
+        predictions = predictorHelper.get_prediction(attachment_info)
 
         for prediction in predictions:
             reply = Activity(type=ActivityTypes.message)
-            reply.text = f"{prediction['predictor']} predictor Status: {prediction['status']}"
+            reply_str = ""
+            if(len(prediction["models"]) == 0):
+                reply_str += f"\n\nThe {prediction['predictor']} has no models yet \n\n"
+            else: 
+                reply_str += f"\n\n The {prediction['predictor']} predictor use model(s) and get result(s):\n\n"
+            for model in prediction["models"]:
+                reply_str += f"\t{model['model']} model says result is: {model['prediction']}\n\n"
+            reply.text = reply_str
             await turn_context.send_activity(reply)
         
 
