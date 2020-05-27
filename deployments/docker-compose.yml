@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  pytorch_pdd:
+    container_name: PDDSpytorch
+    build: 
+      context: ../
+      dockerfile: deployments/PDDetectionServicePython/PDDSpytorch/dockerfile 
+    ports:
+      - "5000:5000"
+  tensorflow_pdd:
+    container_name: PDDStensorflow
+    build: 
+      context: ../
+      dockerfile: deployments/PDDetectionServicePython/PDDStensorflow/dockerfile 
+    ports:
+      - "5001:5000"
+  scikit-learn_pdd:
+    container_name: PDDSscikit-learn
+    build: 
+      context: ../
+      dockerfile: deployments/PDDetectionServicePython/PDDSscikit-learn/dockerfile 
+    ports:
+      - "5002:5000"
+  # pd_bot_py:
+  #   container_name: PDbotPython
+  #   build: 
+  #     context: ../
+  #     dockerfile: deployments/PDbotPython/dockerfile 
+  #   ports:
+  #     - "3978:3978"
