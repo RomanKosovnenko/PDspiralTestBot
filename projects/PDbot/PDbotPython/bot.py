@@ -68,7 +68,6 @@ class PDbot(ActivityHandler):
             + f"v3/attachments/{response.id}/views/original"
         )
         return Attachment(
-            name="architecture-resize.png",
             content_type="image/png",
             content_url=attachment_uri,
         )
