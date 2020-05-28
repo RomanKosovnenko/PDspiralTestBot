@@ -6,14 +6,14 @@ import json
 import numpy as np
 
 def quantify_image(image):
-	# compute the histogram of oriented gradients feature vector for
-	# the input image
-	features = feature.hog(image, orientations=9,
-		pixels_per_cell=(10, 10), cells_per_block=(2, 2),
-		transform_sqrt=True, block_norm="L1")
-
-	# return the feature vector
-	return features
+    # compute the histogram of oriented gradients feature vector for
+    # the input image
+    features = feature.hog(image, orientations=9, 
+    	pixels_per_cell=(10, 10), cells_per_block=(2, 2), 
+    	transform_sqrt=True, block_norm="L1")
+        
+    # return the feature vector
+    return features
 
 def load_classifier(name):
     filename = str(name) + '.pkl'

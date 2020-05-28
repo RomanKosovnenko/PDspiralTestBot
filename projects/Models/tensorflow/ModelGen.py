@@ -7,34 +7,34 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-_URL = 'https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip'
+_URL = 'https://storage.googleapis.com/mledu-datasets/spiral_filtered.zip'
 
-path_to_zip = tf.keras.utils.get_file('cats_and_dogs.zip', origin=_URL, extract=True)
+path_to_zip = tf.keras.utils.get_file('spiral.zip', origin=_URL, extract=True)
 
-PATH = os.path.join(os.path.dirname(path_to_zip), 'cats_and_dogs_filtered')
+PATH = os.path.join(os.path.dirname(path_to_zip), 'spiral_filtered')
 
 train_dir = os.path.join(PATH, 'train')
 validation_dir = os.path.join(PATH, 'validation')
 
-train_cats_dir = os.path.join(train_dir, 'cats')  # directory with our training cat pictures
-train_dogs_dir = os.path.join(train_dir, 'dogs')  # directory with our training dog pictures
-validation_cats_dir = os.path.join(validation_dir, 'cats')  # directory with our validation cat pictures
-validation_dogs_dir = os.path.join(validation_dir, 'dogs')  # directory with our validation dog pictures
+train_healthy_dir = os.path.join(train_dir, 'healthy')  # directory with our training cat pictures
+train_parkinson_dir = os.path.join(train_dir, 'parkinson')  # directory with our training dog pictures
+validation_healthy_dir = os.path.join(validation_dir, 'healthy')  # directory with our validation cat pictures
+validation_parkinson_dir = os.path.join(validation_dir, 'parkinson')  # directory with our validation dog pictures
 
-num_cats_tr = len(os.listdir(train_cats_dir))
-num_dogs_tr = len(os.listdir(train_dogs_dir))
+num_healthy_tr = len(os.listdir(train_healthy_dir))
+num_parkinson_tr = len(os.listdir(train_parkinson_dir))
 
-num_cats_val = len(os.listdir(validation_cats_dir))
-num_dogs_val = len(os.listdir(validation_dogs_dir))
+num_healthy_val = len(os.listdir(validation_healthy_dir))
+num_parkinson_val = len(os.listdir(validation_parkinson_dir))
 
-total_train = num_cats_tr + num_dogs_tr
-total_val = num_cats_val + num_dogs_val
+total_train = num_healthy_tr + num_parkinson_tr
+total_val = num_healthy_val + num_parkinson_val
 
-print('total training cat images:', num_cats_tr)
-print('total training dog images:', num_dogs_tr)
+print('total training cat images:', num_healthy_tr)
+print('total training dog images:', num_parkinson_tr)
 
-print('total validation cat images:', num_cats_val)
-print('total validation dog images:', num_dogs_val)
+print('total validation cat images:', num_healthy_val)
+print('total validation dog images:', num_parkinson_val)
 print("--")
 print("Total training images:", total_train)
 print("Total validation images:", total_val)

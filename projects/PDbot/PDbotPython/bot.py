@@ -87,6 +87,11 @@ class PDbot(ActivityHandler):
                 await self._handle_no_attachments_message(turn_context)
 
     async def _on_command_message_activity(self, turn_context: TurnContext):
+        """
+        Handle all command messages (Messages with '/' as a first char)
+        :param turn_context:
+        :return: return true if the message is command
+        """
         if turn_context.activity.text == '/start':
             await self._send_welcome_message(turn_context)
             return True
@@ -115,13 +120,6 @@ class PDbot(ActivityHandler):
                 await self._handle_incoming_image_attachments_message(turn_context, attachment)
             else:
                 await self._handle_no_image_attachments_message(turn_context)
-
-
-            # attachment_info = await self._download_attachment_and_write(attachment)
-            # if "filename" in attachment_info:
-            #     await turn_context.send_activity(
-            #         f"Attachment {attachment_info['filename']} has been received to {attachment_info['local_path']}"
-            #     )
 
     async def _handle_no_image_attachments_message(self, turn_context: TurnContext):
         """
@@ -175,6 +173,13 @@ class PDbot(ActivityHandler):
             return {}
 
     async def _predict_pd(self, turn_context: TurnContext, attachment_info: dict): 
+        """
+        Use PredictorHelper class to call all predictor services
+        and return results
+        :param turn_context
+        :param attachment_info
+        """
+        #TODO Split in two methouds according to CleanCode
         predictorHelper = PredictorHelper()
 
         predictions = predictorHelper.get_prediction(attachment_info)

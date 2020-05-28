@@ -1,4 +1,1 @@
-opencv-python
-imutils
-scikit-learn
-scikit-image
+tensorflow
