@@ -3,7 +3,7 @@ Flask==1.1.2
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
-Werkzeug==0.15
+Werkzeug==0.15.5
 opencv-python==4.2.0.34
 imutils==0.5.3
 scikit-image==0.16.2
